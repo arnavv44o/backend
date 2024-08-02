@@ -9,10 +9,15 @@ app.use(bodyParser.json());
 
 // Route: /bfhl | Method: POST
 app.post('/bfhl', (req, res) => {
-    const { data, filters } = req.body;
-    
-    if (!Array.isArray(data) || !Array.isArray(filters)) {
-        return res.status(400).json({ is_success: false, error: 'Invalid data or filters format' });
+    const { data } = req.body;
+
+    if (!Array.isArray(data)) {
+        return res.status(400).json({ is_success: false, error: 'Invalid data format' });
+    }
+
+    // Validate data elements
+    if (!data.every(item => typeof item === 'string')) {
+        return res.status(400).json({ is_success: false, error: 'Invalid data items' });
     }
 
     let numbers = [];
@@ -28,20 +33,15 @@ app.post('/bfhl', (req, res) => {
 
     let highest_alphabet = alphabets.length ? [alphabets.sort((a, b) => b.localeCompare(a))[0]] : [];
 
+    // Default filters applied: 'numbers' and 'highestAlphabet'
     let response = {
         is_success: true,
-        user_id: "arnav_thakur",
-        email: "as0762@srmist.edu.in",
-        roll_number: "RA2111003010371"
+        user_id: "john_doe_17091999",
+        email: "john@xyz.com",
+        roll_number: "ABCD123",
+        numbers: numbers,
+        highest_alphabet: highest_alphabet
     };
-
-    if (filters.includes('numbers')) {
-        response.numbers = numbers;
-    }
-    
-    if (filters.includes('highestAlphabet')) {
-        response.highest_alphabet = highest_alphabet;
-    }
 
     res.json(response);
 });
